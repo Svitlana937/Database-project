@@ -8,6 +8,14 @@ def run():
 
         if choice == '1':
             print("Loading Speakers...")
+        elif choice == '2':
+            print("Loading Attendees by Company...")
+        elif choice == '3':
+            print("Loading New Attendees...")
+        elif choice == '4':
+            print("Loading Connected Attendees...")
+        elif choice == '5':
+            print("Loading Attendee Connection...")
         elif choice == '6':
             print("Loading Rooms...")
         elif choice == 'x':
