@@ -1,5 +1,9 @@
 def show_menu():
-    print("\n--- CONFERENCE SYSTEM ---")
+    print("Conference Management")
+    print("---------------------")
+    print("\n")
+    print("MENU")
+    print("====")
     print("1 - View Speakers & Sessions")
     print("2 - View Attendees by Company")
     print("3 - Add New Attendee")
