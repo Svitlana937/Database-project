@@ -7,7 +7,11 @@ def run():
         choice = input("Your choice: ")
 
         if choice == '1':
-            print("Loading Speakers...")
+            name = input("Search for speaker: ")
+            results = db_queries.fetch_speakers_and_sessions(name)
+            print(f"\n--- Results for '{name}' ---")
+            for speaker, title, room in results:
+                print(f"[*] {speaker} | Session: {title} | Room: {room}")
         elif choice == '2':
             print("Loading Attendees by Company...")
         elif choice == '3':
