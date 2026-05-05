@@ -24,8 +24,14 @@ def run():
                 for row in results:
                     # Просто печатаем элементы через запятую или пробел
                     print(row[0], "|", row[1], "|", row[2], "|", row[3])
+
         elif choice == '3':
-            print("Loading New Attendees...")
+            elif choice == '3':
+            name = input("Enter attendee name: ")
+            dob = input("Enter date of birth (YYYY-MM-DD): ")
+            company_id = input("Enter company ID: ")
+            db_queries.add_new_attendee(name, dob, company_id)
+            
         elif choice == '4':
             print("Loading Connected Attendees...")
         elif choice == '5':
