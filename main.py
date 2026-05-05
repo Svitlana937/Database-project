@@ -27,11 +27,13 @@ def run():
 
         elif choice == '3':
             elif choice == '3':
-            name = input("Enter attendee name: ")
-            dob = input("Enter date of birth (YYYY-MM-DD): ")
-            company_id = input("Enter company ID: ")
-            db_queries.add_new_attendee(name, dob, company_id)
-            
+                id = input("Enter attendee ID: ")
+                name = input("Enter attendee name: ")
+                dob = input("Enter date of birth (YYYY-MM-DD): ")
+                gender = input("Enter gender: ")
+                company_id = input("Enter company ID: ")
+                db_queries.add_new_attendee(id, name, dob, gender, company_id)
+
         elif choice == '4':
             print("Loading Connected Attendees...")
         elif choice == '5':

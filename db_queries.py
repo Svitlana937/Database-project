@@ -25,9 +25,11 @@ def attendees_by_company(company_id):
     return cursor.fetchall()
 
 
-def add_new_attendee(name, dob, company_id):
-    query = "INSERT INTO attendee (attendeeName, attendeeDOB, attendeeCompanyID) VALUES (%s, %s, %s)"
-    values = (name, dob, company_id)
+def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
+    query = "INSERT INTO attendee (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID) VALUES (%s, %s, %s, %s, %s)"
+    values = (a_id, a_name, a_dob, a_gen, company_id)
     cursor.execute(query, values)
-    print("Attendee added to database")
+    mydb.commit()
+    print("Attendee successfully added")
+    cursor.close()
     
