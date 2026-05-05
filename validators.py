@@ -10,8 +10,17 @@ def is_company_id_valid(company_id):
     cursor = mydb.cursor()
     cursor.execute("SELECT companyID FROM company WHERE companyID = %s", (int(company_id),))
     result = cursor.fetchone()
+    cursor.close()
+    
     if result is None:
         print("Company ID does not exist.")
         return False
     return True
-    cursor.close()
+    
+
+def gender_validation(gender):
+    valid_genders = ['Male', 'Female']
+    if gender not in valid_genders:
+        print(f"*** ERROR *** Gender must be Male/Female")
+        return False
+    return True 

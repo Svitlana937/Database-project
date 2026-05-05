@@ -1,4 +1,5 @@
 from config_db import cursor
+import validators
 
 def fetch_speakers_and_sessions(search_term):    
     sql = """
@@ -26,10 +27,25 @@ def attendees_by_company(company_id):
 
 
 def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
-    query = "INSERT INTO attendee (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID) VALUES (%s, %s, %s, %s, %s)"
-    values = (a_id, a_name, a_dob, a_gen, company_id)
-    cursor.execute(query, values)
-    mydb.commit()
-    print("Attendee successfully added")
-    cursor.close()
+    if not validators.validate_attendee_id(a_id):
+        return
     
+    if not validators.gender_validation(a_gen):
+        return
+
+    if not validators.is_company_id_valid(company_id):
+        return
+
+    try:
+        cursor = mydb.cursor()
+
+        query = "INSERT INTO attendee (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID) VALUES (%s, %s, %s, %s, %s)"
+        values = (a_id, a_name, a_dob, a_gen, company_id)
+
+        cursor.execute(query, values)
+        mydb.commit()
+
+        print("Attendee successfully added")
+        cursor.close()
+    except mysql.connector.Error as err:
+        print(f"\n*** DATABASE ERROR *** {err}")
