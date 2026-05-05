@@ -1,4 +1,4 @@
-from mysql_connection import mydb
+from config_db import db
 
 def validate_attendee_id(attendee_id):
     if not attendee_id.isdigit():

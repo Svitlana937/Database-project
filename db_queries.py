@@ -1,7 +1,10 @@
-from config_db import cursor
+from config_db import db
 import validators
+import mysql.connector
 
-def fetch_speakers_and_sessions(search_term):    
+
+def fetch_speakers_and_sessions(search_term):   
+    cursor = db.cursor() 
     sql = """
     SELECT s.speakerName, s.sessionTitle, r.roomName
     FROM session s
@@ -9,9 +12,22 @@ def fetch_speakers_and_sessions(search_term):
     WHERE s.speakerName LIKE %s
     """
     cursor.execute(sql, (f"%{search_term}%",))
-    return cursor.fetchall()
+    results = cursor.fetchall()
+    cursor.close()
+    return results
 
 def attendees_by_company(company_id):
+    cursor = db.cursor()
+    check_sql = "SELECT companyName FROM company WHERE companyID = %s"
+    cursor.execute(check_sql, (company_id,))
+    company = cursor.fetchone()
+
+    if company is None:
+        print(f"*** ERROR *** Company ID {company_id} does not exist")
+        cursor.close()
+        return
+    print(f"\n{company[0]} Attendees")
+
     sql = """
     SELECT a.attendeeName, a.attendeeDOB, s.sessionTitle, s.speakerName, s.sessionDate, r.roomName
     FROM attendee a
@@ -23,7 +39,15 @@ def attendees_by_company(company_id):
     ORDER BY a.attendeeName
     """
     cursor.execute(sql, (company_id,))
-    return cursor.fetchall()
+    results = cursor.fetchall()
+
+    if not results:
+        print(f"No registration records found for {company[0]}")  
+    else:                                         
+        for row in results:
+            print(f"{row[0]} | DOB: {row[1]} | Session: {row[2]} | Speaker: {row[3]}") 
+            
+    cursor.close()
 
 
 def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
@@ -37,13 +61,13 @@ def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
         return
 
     try:
-        cursor = mydb.cursor()
+        cursor = db.cursor()
 
         query = "INSERT INTO attendee (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID) VALUES (%s, %s, %s, %s, %s)"
         values = (a_id, a_name, a_dob, a_gen, company_id)
 
         cursor.execute(query, values)
-        mydb.commit()
+        db.commit()
 
         print("Attendee successfully added")
         cursor.close()
