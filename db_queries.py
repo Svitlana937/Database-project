@@ -1,6 +1,7 @@
 from config_db import db
 import validators
 import mysql.connector
+from neo4j import get_session
 
 
 def fetch_speakers_and_sessions(search_term):   
@@ -73,3 +74,17 @@ def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
         cursor.close()
     except mysql.connector.Error as err:
         print(f"\n*** DATABASE ERROR *** {err}")
+
+
+def view_connected_attendees(attendee_id):
+    cursor = db.cursor()
+    cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (attendee_id,))
+    attendee = cursor.fetchone()
+    
+    if attendee:
+        print(f"Attendee Name: {attendee[0]}")        
+        query = "MATCH (a1 {attendeeID: $id})-[:CONNECTED_TO]-(a2) RETURN a2.attendeeName AS name"
+        with get_session() as session:
+            results = session.run(query, id=attendee_id) 
+            for record in results:
+                print(record["name"])
