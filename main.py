@@ -22,7 +22,6 @@ def run():
             else:
                 print("Results:")
                 for row in results:
-                    # Просто печатаем элементы через запятую или пробел
                     print(row[0], "|", row[1], "|", row[2], "|", row[3])
 
         elif choice == '3':

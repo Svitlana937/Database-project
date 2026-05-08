@@ -1,7 +1,7 @@
 from config_db import db
 import validators
 import mysql.connector
-from neo4j import get_session
+from config_neo4j import get_session
 
 
 def fetch_speakers_and_sessions(search_term):   
@@ -83,8 +83,18 @@ def view_connected_attendees(attendee_id):
     
     if attendee:
         print(f"Attendee Name: {attendee[0]}")        
-        query = "MATCH (a1 {attendeeID: $id})-[:CONNECTED_TO]-(a2) RETURN a2.attendeeName AS name"
+        query = "MATCH (a1:Attendee {attendeeID: $id})-[:CONNECTED_TO]-(a2:Attendee) RETURN a2.attendeeID AS id, a2.attendeeName AS name"
+        RETURN a2.attendeeID AS id, a2.attendeeName AS name"
+
         with get_session() as session:
             results = session.run(query, id=attendee_id) 
-            for record in results:
-                print(record["name"])
+            records = list(results)
+            
+            if records:
+                print("These attendees are connected:")
+                for record in records:
+                    print(f"{record['id']} | {record['name']}")
+            else:
+                print("No connections found.")
+    else:
+        print("Attendee not found.")
