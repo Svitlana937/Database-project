@@ -34,9 +34,24 @@ def run():
                 db_queries.add_new_attendee(id, name, dob, gender, company_id)
 
         elif choice == '4':
-            print("Loading Connected Attendees...")
+            attendee_id = input("Enter Attendee ID : ")
+            
+            if attendee_id.isdigit():
+                db_operations.view_connected_attendees(attendee_id)
+            else:
+                print("*** ERROR *** Attendee ID must be a number")
         elif choice == '5':
-            print("Loading Attendee Connection...")
+            while True:
+                id1 = input("Enter Attendee 1 ID : ")
+                id2 = input("Enter Attendee 2 ID : ")
+
+                if not id1.isdigit() or not id2.isdigit():
+                    print("*** ERROR *** Attendee IDs must be numbers")
+                elif id1 == id2:
+                    print("*** ERROR *** An attendee cannot connect to him/herself")
+                else:
+                    db_operations.add_attendee_connection(id1, id2)
+                    break
         elif choice == '6':
             print("Loading Rooms...")
         elif choice == 'x':
@@ -44,6 +59,8 @@ def run():
             status = False
         else:
             print("Invalid option, try again.")
+
+            
 
 if __name__ == "__main__":
     run()

@@ -98,3 +98,27 @@ def view_connected_attendees(attendee_id):
                 print("No connections found.")
     else:
         print("Attendee not found.")
+
+def add_attendee_connection(id1, id2):
+    cursor = db.cursor()
+    
+    cursor.execute("SELECT attendeeID FROM attendee WHERE attendeeID IN (%s, %s)", (id1, id2))
+    if len(cursor.fetchall()) < 2:
+        print("*** ERROR *** One or both attendee IDs do not exist")
+        return
+
+    with get_session() as session:
+        
+        check = "MATCH (a1 {attendeeID: $id1})-[r:CONNECTED_TO]-(a2 {attendeeID: $id2}) RETURN r"
+        if session.run(check, id1=int(id1), id2=int(id2)).single():
+            print("*** ERROR *** These attendees are already connected")
+            return
+
+
+        query = """
+        MERGE (a1:Attendee {attendeeID: $id1})
+        MERGE (a2:Attendee {attendeeID: $id2})
+        MERGE (a1)-[:CONNECTED_TO]-(a2)
+        """
+        session.run(query, id1=int(id1), id2=int(id2))
+        print(f"Attendee {id1} is now connected to Attendee {id2}")
