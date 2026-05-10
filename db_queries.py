@@ -92,7 +92,7 @@ def view_connected_attendees(attendee_id):
     
     if attendee:
         print(f"Attendee Name: {attendee[0]}")        
-        query = "MATCH (a1:Attendee {attendeeID: $id})-[:CONNECTED_TO]-(a2:Attendee) RETURN a2.attendeeID AS id, a2.attendeeName AS name"
+        query = "MATCH (a1:Attendee {attendeeID: $id})-[:CONNECTED_TO]->(a2:Attendee) RETURN a2.attendeeID AS id, a2.attendeeName AS name"
         RETURN a2.attendeeID AS id, a2.attendeeName AS name"
 
         with get_session() as session:
@@ -129,7 +129,7 @@ def add_attendee_connection(id1, id2):
         query = """
         MERGE (a1:Attendee {attendeeID: $id1})
         MERGE (a2:Attendee {attendeeID: $id2})
-        MERGE (a1)-[:CONNECTED_TO]-(a2)
+        MERGE (a1)-[:CONNECTED_TO]->(a2)
         """
         session.run(query, id1=int(id1), id2=int(id2))
         print(f"Attendee {id1} is now connected to Attendee {id2}")
