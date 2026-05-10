@@ -3,7 +3,8 @@ import validators
 import mysql.connector
 from config_neo4j import get_session
 
-
+# Database query functions
+# Each function corresponds to a specific database operation, such as fetching speakers, attendees, adding new attendees, and managing connections between attendees.
 def fetch_speakers_and_sessions(search_term):   
     cursor = db.cursor() 
     sql = """
@@ -17,6 +18,8 @@ def fetch_speakers_and_sessions(search_term):
     cursor.close()
     return results
 
+
+# This function retrieves speakers and their associated sessions and rooms based on a search term. It uses a SQL query with a JOIN to combine data from the session and room tables, filtering results by speaker name using a LIKE clause for partial matching.
 def attendees_by_company(company_id):
     cursor = db.cursor()
     check_sql = "SELECT companyName FROM company WHERE companyID = %s"
@@ -51,7 +54,12 @@ def attendees_by_company(company_id):
     cursor.close()
 
 
+# This function retrieves attendees associated with a specific company ID, along with their session details. It first checks if the company ID exists, then performs a JOIN across multiple tables (attendee, company, registration, session, room) to gather comprehensive information about each attendee's sessions and speakers. The results are printed in a formatted manner.
 def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
+    if validators.is_attendee_existing(a_id):
+        print(f"*** ERROR *** Attendee ID: {a_id} already exists")
+        return
+
     if not validators.validate_attendee_id(a_id):
         return
     
@@ -76,6 +84,7 @@ def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
         print(f"\n*** DATABASE ERROR *** {err}")
 
 
+# This function adds a new attendee to the database. It first validates the attendee
 def view_connected_attendees(attendee_id):
     cursor = db.cursor()
     cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (attendee_id,))
@@ -99,6 +108,8 @@ def view_connected_attendees(attendee_id):
     else:
         print("Attendee not found.")
 
+
+# This function retrieves and displays attendees that are connected to a given attendee ID. It first checks if the attendee exists in the MySQL database, then uses a Cypher query to find connected attendees in the Neo4j graph database. The results are printed in a formatted manner.
 def add_attendee_connection(id1, id2):
     cursor = db.cursor()
     
@@ -123,6 +134,8 @@ def add_attendee_connection(id1, id2):
         session.run(query, id1=int(id1), id2=int(id2))
         print(f"Attendee {id1} is now connected to Attendee {id2}")
 
+
+# This function creates a connection between two attendees in the Neo4j graph database. It first checks if both attendee IDs exist in the MySQL database, then verifies that they are not already connected in Neo4j. If all checks pass, it uses a Cypher query to create a bidirectional connection between the two attendees.
 def view_rooms():
     cursor = db.cursor()
     query = "SELECT roomID, roomName, capacity FROM room ORDER BY roomID"

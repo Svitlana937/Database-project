@@ -7,7 +7,7 @@ def validate_attendee_id(attendee_id):
     return True 
 
 def is_company_id_valid(company_id):    
-    cursor = mydb.cursor()
+    cursor = db.cursor()
     cursor.execute("SELECT companyID FROM company WHERE companyID = %s", (int(company_id),))
     result = cursor.fetchone()
     cursor.close()
