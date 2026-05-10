@@ -122,3 +122,16 @@ def add_attendee_connection(id1, id2):
         """
         session.run(query, id1=int(id1), id2=int(id2))
         print(f"Attendee {id1} is now connected to Attendee {id2}")
+
+def view_rooms():
+    cursor = db.cursor()
+    query = "SELECT roomID, roomName, capacity FROM room ORDER BY roomID"
+    cursor.execute(query)
+    rooms = cursor.fetchall()
+
+    print(f"{'RoomID':<8} | {'RoomName':<16} | {'Capacity':<8}")
+    print("-" * 40)
+    for r in rooms:
+        print(f"{r[0]:<8} | {r[1]:<16} | {r[2]:<8}")
+    cursor.close()
+

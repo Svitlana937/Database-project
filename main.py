@@ -53,7 +53,7 @@ def run():
                     db_operations.add_attendee_connection(id1, id2)
                     break
         elif choice == '6':
-            print("Loading Rooms...")
+            db_operations.view_rooms()
         elif choice == 'x':
             print("Closing application.")
             status = False
