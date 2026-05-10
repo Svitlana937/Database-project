@@ -24,3 +24,13 @@ def gender_validation(gender):
         print(f"*** ERROR *** Gender must be Male/Female")
         return False
     return True 
+
+
+def is_attendee_existing(attendee_id):
+    cursor = db.cursor()
+    cursor.execute("SELECT attendeeID FROM attendee WHERE attendeeID = %s", (int(attendee_id),))
+    result = cursor.fetchone()
+    cursor.close()
+    if result is None:
+        return False
+    return True

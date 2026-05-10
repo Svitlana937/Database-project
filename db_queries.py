@@ -62,9 +62,6 @@ def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
     if not validators.validate_attendee_id(a_id):
         return
     
-    if not validators.validate_date(a_dob):
-        return
-    
     if not validators.gender_validation(a_gen):
         return
 
