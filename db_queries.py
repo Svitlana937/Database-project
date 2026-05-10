@@ -54,13 +54,15 @@ def attendees_by_company(company_id):
     cursor.close()
 
 
-# This function retrieves attendees associated with a specific company ID, along with their session details. It first checks if the company ID exists, then performs a JOIN across multiple tables (attendee, company, registration, session, room) to gather comprehensive information about each attendee's sessions and speakers. The results are printed in a formatted manner.
 def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
     if validators.is_attendee_existing(a_id):
         print(f"*** ERROR *** Attendee ID: {a_id} already exists")
         return
 
     if not validators.validate_attendee_id(a_id):
+        return
+    
+    if not validators.validate_date(a_dob):
         return
     
     if not validators.gender_validation(a_gen):
@@ -93,7 +95,6 @@ def view_connected_attendees(attendee_id):
     if attendee:
         print(f"Attendee Name: {attendee[0]}")        
         query = "MATCH (a1:Attendee {attendeeID: $id})-[:CONNECTED_TO]->(a2:Attendee) RETURN a2.attendeeID AS id, a2.attendeeName AS name"
-        RETURN a2.attendeeID AS id, a2.attendeeName AS name"
 
         with get_session() as session:
             results = session.run(query, id=attendee_id) 
