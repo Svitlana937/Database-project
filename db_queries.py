@@ -86,26 +86,38 @@ def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
 # This function adds a new attendee to the database. It first validates the attendee
 def view_connected_attendees(attendee_id):
     cursor = db.cursor()
-    cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (attendee_id,))
+    cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (int(attendee_id,)))
     attendee = cursor.fetchone()
+
+    if attendee is None:
+        print("*** ERROR *** Attendee does not exist")
+        cursor.close()
+        return
+
+        print(f"Attendee Name:  {attendee[0]}")
+        print("-" * 20)    
     
-    if attendee:
-        print(f"Attendee Name: {attendee[0]}")        
-        query = "MATCH (a1:Attendee {attendeeID: $id})-[:CONNECTED_TO]->(a2:Attendee) RETURN a2.attendeeID AS id, a2.attendeeName AS name"
 
         with get_session() as session:
-            results = session.run(query, id=attendee_id) 
+            query = """
+            MATCH (a:Attendee {AttendeeID: $id})-[:CONNECTED_TO]-(a2:Attendee)
+            RETURN a2.AttendeeID AS id
+            """
+
+            results = session.run(query, id=int(attendee_id)) 
             records = list(results)
             
-            if records:
+            if not records:
+                print("No connections")
+            else:
                 print("These attendees are connected:")
                 for record in records:
+                    cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (record['id'],))
+                    name = cursor.fetchone()
+                    name = name[0] if name else "Unknown"
                     print(f"{record['id']} | {record['name']}")
-            else:
-                print("No connections found.")
-    else:
-        print("Attendee not found.")
-
+                    
+        cursor.close()
 
 # This function retrieves and displays attendees that are connected to a given attendee ID. It first checks if the attendee exists in the MySQL database, then uses a Cypher query to find connected attendees in the Neo4j graph database. The results are printed in a formatted manner.
 def add_attendee_connection(id1, id2):
@@ -125,9 +137,9 @@ def add_attendee_connection(id1, id2):
 
 
         query = """
-        MERGE (a1:Attendee {attendeeID: $id1})
-        MERGE (a2:Attendee {attendeeID: $id2})
-        MERGE (a1)-[:CONNECTED_TO]->(a2)
+        MATCH (a1 {AttendeeID: $id1})-[r:CONNECTED_TO]-(a2 {AttendeeID: $id2}) RETURN r
+        MERGE (a1:Attendee {AttendeeID: $id1})
+        MERGE (a2:Attendee {AttendeeID: $id2})
         """
         session.run(query, id1=int(id1), id2=int(id2))
         print(f"Attendee {id1} is now connected to Attendee {id2}")
