@@ -129,14 +129,18 @@ def add_attendee_connection(id1, id2):
     cursor.execute("SELECT attendeeID FROM attendee WHERE attendeeID IN (%s, %s)", (id1, id2))
     if len(cursor.fetchall()) < 2:
         print("*** ERROR *** One or both attendee IDs do not exist")
+        print()
+        cursor.close()
         return
+    cursor.close()
 
     with get_session() as session:
         
         check = "MATCH (a1 {AttendeeID: $id1})-[r:CONNECTED_TO]-(a2 {AttendeeID: $id2}) RETURN r"
         if session.run(check, id1=int(id1), id2=int(id2)).single():
             print("*** ERROR *** These attendees are already connected")
-            return
+            print()
+            return False
 
 
         query = """
@@ -146,6 +150,7 @@ def add_attendee_connection(id1, id2):
         """
         session.run(query, id1=int(id1), id2=int(id2))
         print(f"Attendee {id1} is now connected to Attendee {id2}")
+        return True
 
 
 # This function creates a connection between two attendees in the Neo4j graph database. It first checks if both attendee IDs exist in the MySQL database, then verifies that they are not already connected in Neo4j. If all checks pass, it uses a Cypher query to create a bidirectional connection between the two attendees.

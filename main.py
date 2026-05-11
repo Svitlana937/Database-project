@@ -53,11 +53,17 @@ def run():
 
                 if not id1.isdigit() or not id2.isdigit():
                     print("*** ERROR *** Attendee IDs must be numbers")
-                elif id1 == id2:
+                    print()
+                    continue
+
+                if id1 == id2:
                     print("*** ERROR *** An attendee cannot connect to him/herself")
-                else:
-                    db_queries.add_attendee_connection(id1, id2)
+                    print()
+                    continue
+
+                if db_queries.add_attendee_connection(id1, id2):
                     break
+
 
         elif choice == '6':
             db_queries.view_rooms()
