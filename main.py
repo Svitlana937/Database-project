@@ -27,21 +27,14 @@ def run():
                     continue
                 break
 
-            results = db_queries.attendees_by_company(comp_id)
-            
-            if len(results) == 0:
-                print("No records found.")
-            else:
-                print("Results:")
-                for row in results:
-                    print(row[0], "|", row[1], "|", row[2], "|", row[3])
-
         elif choice == '3':
-                id = input("Enter attendee ID: ")
-                name = input("Enter attendee name: ")
-                dob = input("Enter date of birth (YYYY-MM-DD): ")
-                gender = input("Enter gender: ")
-                company_id = input("Enter company ID: ")
+                print("Add New Attendee")
+                print("-"*30)
+                id = input("Attendee ID: ")
+                name = input("Name: ")
+                dob = input("DOB: ")
+                gender = input("Gender: ")
+                company_id = input("Company ID: ")
                 db_queries.add_new_attendee(id, name, dob, gender, company_id)
 
         elif choice == '4':

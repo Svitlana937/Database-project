@@ -26,10 +26,10 @@ def attendees_by_company(company_id):
     cursor.execute(check_sql, (company_id,))
     company = cursor.fetchone()
 
-    if company is None:
-        print(f"*** ERROR *** Company ID {company_id} does not exist")
-        cursor.close()
-        return False
+    #if company is None:
+    #   print(f"*** ERROR *** Company ID {company_id} does not exist")
+    #    cursor.close()
+    #   return False
     print(f"\n{company[0]} Attendees")
 
     sql = """
@@ -46,21 +46,21 @@ def attendees_by_company(company_id):
     results = cursor.fetchall()
 
     if not results:
-        print(f"No registration records found for {company[0]}")  
+        print(f"No attendees found for {company[0]}")
     else:                                         
         for row in results:
-            print(f"{row[0]} | DOB: {row[1]} | Session: {row[2]} | Speaker: {row[3]}") 
+            print(f"{row[0]} | {row[1]} | {row[2]} | {row[3]} | {row[4]} | {row[5]}")
             
     cursor.close()
     return True
 
 
 def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
-    if validators.is_attendee_existing(a_id):
-        print(f"*** ERROR *** Attendee ID: {a_id} already exists")
+    if not validators.validate_attendee_id(a_id):
         return
 
-    if not validators.validate_attendee_id(a_id):
+    if validators.is_attendee_existing(a_id):
+        print(f"*** ERROR *** Attendee ID: {a_id} already exists")
         return
     
     if not validators.gender_validation(a_gen):

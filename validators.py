@@ -2,9 +2,9 @@ from config_db import db
 
 def validate_attendee_id(attendee_id):
     if not attendee_id.isdigit():
-        print("Attendee ID must be a number.")
+        #print("Attendee ID must be a number.")
         return False
-    return True 
+    return True
 
 def is_company_id_valid(company_id):    
     cursor = db.cursor()
@@ -13,7 +13,7 @@ def is_company_id_valid(company_id):
     cursor.close()
     
     if result is None:
-        print("Company ID does not exist.")
+        print("*** ERROR *** Company ID does not exist.")
         return False
     return True
     
