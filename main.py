@@ -12,16 +12,20 @@ def run():
             name = input("Enter speaker name : ")
             results = db_queries.fetch_speakers_and_sessions(name)
             print(f"Session Details for : {name}")
+            print("-"*30)
+            print("No speakers found of that name")
             for speaker, title, room in results:
-                print(f"[*] {speaker} | Session: {title} | Room: {room}")
+                print(f" {speaker} | {title} | {room}")
 
         elif choice == '2':
             while True:
-                comp_id = input("Enter Company ID: ")
-                if not comp_id.isdigit() or not validators.is_company_id_valid(comp_id):
-                    print("Enter company ID : ")
-                else:
-                    break
+                comp_id = input("Enter Company ID : ")
+                if not comp_id.isdigit() or int(comp_id) <= 0:
+                    continue
+                result = db_queries.attendees_by_company(comp_id)
+                if result is False:
+                    continue
+                break
 
             results = db_queries.attendees_by_company(comp_id)
             

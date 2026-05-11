@@ -1,7 +1,6 @@
 def show_menu():
     print("Conference Management")
-    print("---------------------")
-    print("\n")
+    print("---------------------\n")
     print("MENU")
     print("====")
     print("1 - View Speakers & Sessions")

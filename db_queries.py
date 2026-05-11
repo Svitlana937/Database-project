@@ -29,19 +29,19 @@ def attendees_by_company(company_id):
     if company is None:
         print(f"*** ERROR *** Company ID {company_id} does not exist")
         cursor.close()
-        return
+        return False
     print(f"\n{company[0]} Attendees")
 
     sql = """
-    SELECT a.attendeeName, a.attendeeDOB, s.sessionTitle, s.speakerName, s.sessionDate, r.roomName
-    FROM attendee a
-    JOIN company c      ON a.attendeeCompanyID = c.companyID
-    JOIN registration rg ON a.attendeeID = rg.attendeeID
-    JOIN session s      ON rg.sessionID = s.sessionID
-    JOIN room r         ON s.roomID = r.roomID
-    WHERE c.companyID = %s
-    ORDER BY a.attendeeName
-    """
+            SELECT a.attendeeName, a.attendeeDOB, s.sessionTitle, s.speakerName, s.sessionDate, r.roomName
+            FROM attendee a
+            JOIN company c      ON a.attendeeCompanyID = c.companyID
+            JOIN registration rg ON a.attendeeID = rg.attendeeID
+            JOIN session s      ON rg.sessionID = s.sessionID
+            JOIN room r         ON s.roomID = r.roomID
+            WHERE c.companyID = %s
+            ORDER BY a.attendeeName
+            """
     cursor.execute(sql, (company_id,))
     results = cursor.fetchall()
 
@@ -52,6 +52,7 @@ def attendees_by_company(company_id):
             print(f"{row[0]} | DOB: {row[1]} | Session: {row[2]} | Speaker: {row[3]}") 
             
     cursor.close()
+    return True
 
 
 def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):

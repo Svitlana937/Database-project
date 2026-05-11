@@ -6,6 +6,6 @@ db = mysql.connector.connect(
     host="localhost",
     user="root",
     password="root",
-    database="conference_db"
+    database="appdbproj"
 )
 cursor = db.cursor()
