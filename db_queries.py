@@ -86,7 +86,7 @@ def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
 # This function adds a new attendee to the database. It first validates the attendee
 def view_connected_attendees(attendee_id):
     cursor = db.cursor()
-    cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (int(attendee_id,)))
+    cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (int(attendee_id),))
     attendee = cursor.fetchone()
 
     if attendee is None:
@@ -94,29 +94,29 @@ def view_connected_attendees(attendee_id):
         cursor.close()
         return
 
-        print(f"Attendee Name:  {attendee[0]}")
-        print("-" * 20)    
+    print(f"Attendee Name:  {attendee[0]}")
+    print("-" * 20)    
     
 
-        with get_session() as session:
-            query = """
-            MATCH (a:Attendee {AttendeeID: $id})-[:CONNECTED_TO]-(a2:Attendee)
-            RETURN a2.AttendeeID AS id
-            """
+    with get_session() as session:
+        query = """
+        MATCH (a:Attendee {AttendeeID: $id})-[:CONNECTED_TO]-(a2:Attendee)
+        RETURN a2.AttendeeID AS id
+        """
 
-            results = session.run(query, id=int(attendee_id)) 
-            records = list(results)
+        results = session.run(query, id=int(attendee_id)) 
+        records = list(results)
             
-            if not records:
-                print("No connections")
-            else:
-                print("These attendees are connected:")
-                for record in records:
-                    cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (record['id'],))
-                    name = cursor.fetchone()
-                    name = name[0] if name else "Unknown"
-                    print(f"{record['id']} | {record['name']}")
-                    
+        if not records:
+            print("No connections")
+        else:
+            print("These attendees are connected:")
+            for record in records:
+                cursor.execute("SELECT attendeeName FROM attendee WHERE attendeeID = %s", (record['id'],))
+                name = cursor.fetchone()
+                name = name[0] if name else "Unknown"
+                print(f"{record['id']} |  {name}")
+
         cursor.close()
 
 # This function retrieves and displays attendees that are connected to a given attendee ID. It first checks if the attendee exists in the MySQL database, then uses a Cypher query to find connected attendees in the Neo4j graph database. The results are printed in a formatted manner.
@@ -130,16 +130,16 @@ def add_attendee_connection(id1, id2):
 
     with get_session() as session:
         
-        check = "MATCH (a1 {attendeeID: $id1})-[r:CONNECTED_TO]-(a2 {attendeeID: $id2}) RETURN r"
+        check = "MATCH (a1 {AttendeeID: $id1})-[r:CONNECTED_TO]-(a2 {AttendeeID: $id2}) RETURN r"
         if session.run(check, id1=int(id1), id2=int(id2)).single():
             print("*** ERROR *** These attendees are already connected")
             return
 
 
         query = """
-        MATCH (a1 {AttendeeID: $id1})-[r:CONNECTED_TO]-(a2 {AttendeeID: $id2}) RETURN r
         MERGE (a1:Attendee {AttendeeID: $id1})
         MERGE (a2:Attendee {AttendeeID: $id2})
+        CREATE (a1)-[:CONNECTED_TO]->(a2)
         """
         session.run(query, id1=int(id1), id2=int(id2))
         print(f"Attendee {id1} is now connected to Attendee {id2}")
