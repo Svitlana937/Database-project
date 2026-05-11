@@ -1,14 +1,16 @@
 from config_db import db
 
 def validate_attendee_id(attendee_id):
-    if not attendee_id.isdigit():
-        #print("Attendee ID must be a number.")
-        return False
     return True
+
+    #if not attendee_id.isdigit():
+        #print("Attendee ID must be a number.")
+    #    return False
+    #return True
 
 def is_company_id_valid(company_id):    
     cursor = db.cursor()
-    cursor.execute("SELECT companyID FROM company WHERE companyID = %s", (int(company_id),))
+    cursor.execute("SELECT companyID FROM company WHERE companyID = %s", (company_id,))
     result = cursor.fetchone()
     cursor.close()
     
@@ -28,7 +30,7 @@ def gender_validation(gender):
 
 def is_attendee_existing(attendee_id):
     cursor = db.cursor()
-    cursor.execute("SELECT attendeeID FROM attendee WHERE attendeeID = %s", (int(attendee_id),))
+    cursor.execute("SELECT attendeeID FROM attendee WHERE attendeeID = %s", (attendee_id,))
     result = cursor.fetchone()
     cursor.close()
     if result is None:

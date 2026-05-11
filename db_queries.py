@@ -79,9 +79,11 @@ def add_new_attendee(a_id,a_name, a_dob, a_gen, company_id):
         db.commit()
 
         print("Attendee successfully added")
-        cursor.close()
+        #cursor.close()
     except mysql.connector.Error as err:
         print(f"\n*** DATABASE ERROR *** {err}")
+    finally:
+        cursor.close()
 
 
 # This function adds a new attendee to the database. It first validates the attendee
